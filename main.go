@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+  "strings"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/examples/util"
@@ -123,8 +124,8 @@ func forwardRequest(req *http.Request, reqSourceIP string, reqDestionationPort s
 		}
 	}
 
-	// create a new url from the raw RequestURI sent by the client
-	url := fmt.Sprintf("%s%s", string(*fwdDestination), req.RequestURI)
+  subdomain := strings.Split(req.Host, ".")[0]
+	url := fmt.Sprintf("%s.%s%s", subdomain, *fwdDestination, req.RequestURI)
 
 	// create a new HTTP request
 	forwardReq, err := http.NewRequest(req.Method, url, bytes.NewReader(body))
