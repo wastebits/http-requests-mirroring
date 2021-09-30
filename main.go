@@ -35,7 +35,8 @@ import (
 	"github.com/google/gopacket/tcpassembly/tcpreader"
 )
 
-var fwdDestination = flag.String("destination", "", "Destination of the forwarded requests.")
+var fwdDestination = flag.String("destination", "", "Destination host of the forwarded requests.")
+var fwdProtocol = flag.String("protocol", "https", "Destination protocol, http or https.")
 var fwdPerc = flag.Float64("percentage", 100, "Must be between 0 and 100.")
 var fwdBy = flag.String("percentage-by", "", "Can be empty. Otherwise, valid values are: header, remoteaddr.")
 var fwdHeader = flag.String("percentage-by-header", "", "If percentage-by is header, then specify the header here.")
@@ -125,7 +126,7 @@ func forwardRequest(req *http.Request, reqSourceIP string, reqDestionationPort s
 	}
 
   subdomain := strings.Split(req.Host, ".")[0]
-	url := fmt.Sprintf("%s.%s%s", subdomain, *fwdDestination, req.RequestURI)
+  url := fmt.Sprintf("%s://%s.%s%s", *fwdProtocol, subdomain, *fwdDestination, req.RequestURI)
 
 	// create a new HTTP request
 	forwardReq, err := http.NewRequest(req.Method, url, bytes.NewReader(body))
